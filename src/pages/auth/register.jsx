@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import Input from 'components/Input';
 import { Enum_Rol } from 'utils/enums';
-<<<<<<< HEAD
 import DropDow from 'components/Dropdow';
 import ButtonLoading from 'components/ButtonLoading';
 import useFormData from 'hooks/useFormData';
