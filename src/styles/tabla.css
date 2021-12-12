@@ -2,6 +2,7 @@
     width: 100%;
     margin: 10px;
     overflow-y: scroll;
+<<<<<<< HEAD
 }
 
 .tabla td,
@@ -25,3 +26,28 @@
 .tabla tr:hover {
     background-color: blue;
 }
+=======
+  }
+  
+  .tabla td,
+  .tabla th {
+    padding: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  .tabla th {
+    background-color: #8C515C;
+    color: white;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+  }
+  
+  .tabla tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .tabla tr:hover {
+    background-color: #ddd;
+  }
+>>>>>>> ea22bfaf3ad013aa6fed36d814d2533e1911c810
