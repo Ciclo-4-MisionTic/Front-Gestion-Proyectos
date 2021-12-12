@@ -8,11 +8,7 @@ const useFormData = (initial) => {
     const obj = {};
     fd.forEach((value, key) => {
       if (key.includes('nested')) {
-<<<<<<< HEAD
-        const [p1, p2, p3] = key.split('||');
-=======
         const [p0, p1, p2, p3] = key.split('||');
->>>>>>> ea22bfaf3ad013aa6fed36d814d2533e1911c810
         if (Object.keys(obj).includes(p1)) {
           if (Object.keys(obj[p1]).includes(p2)) {
             obj[p1][p2][p3] = value;

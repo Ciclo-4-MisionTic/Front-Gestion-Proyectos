@@ -3,11 +3,7 @@
 @tailwind utilities;
 
 .sidebar {
-<<<<<<< HEAD
-  @apply w-64 bg-gray-200 shadow flex-col justify-between;
-=======
   @apply w-64 bg-verdeAzul-default shadow flex-col justify-between;
->>>>>>> ea22bfaf3ad013aa6fed36d814d2533e1911c810
 }
 
 .sidebar-route {
@@ -15,9 +11,6 @@
 }
 
 .input {
-<<<<<<< HEAD
-  @apply p-2 border border-indigo-200 focus:outline-none focus:border-indigo-800 rounded-md shadow-sm;
-=======
   @apply p-2 border border-moradoClaro-light focus:outline-none focus:border-moradoClaro-dark rounded-md shadow-sm;
 }
 
@@ -35,5 +28,4 @@
 
 .lapizEditar{
   @apply text-moradoOscuro-dark hover:text-moradoOscuro-light cursor-pointer
->>>>>>> ea22bfaf3ad013aa6fed36d814d2533e1911c810
 }

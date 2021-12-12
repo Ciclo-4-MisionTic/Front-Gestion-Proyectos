@@ -1,10 +1,5 @@
 import Sidebar from 'components/Sidebar';
 import { Outlet } from 'react-router';
-<<<<<<< HEAD
-import React from 'react';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'
-=======
 import React, {useEffect} from 'react';
 import { ToastContainer } from 'react-toastify';
 import { useMutation } from '@apollo/client';
@@ -15,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import PrivateRoute from 'components/PrivateRoute';
 
->>>>>>> ea22bfaf3ad013aa6fed36d814d2533e1911c810
 
 const PrivateLayout = () => {
   const navigate = useNavigate();
