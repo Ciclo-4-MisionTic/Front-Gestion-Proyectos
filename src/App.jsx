@@ -17,6 +17,7 @@ import Register from 'pages/auth/register';
 import Login from 'pages/auth/login';
 import { AuthContext } from 'context/authContext';
 import jwt_decode from 'jwt-decode';
+import IndexInscripciones from 'pages/inscripciones';
 
 // import PrivateRoute from 'components/PrivateRoute';
 
@@ -88,6 +89,8 @@ function App() {
                 <Route path='page2' element={<Page2 />} />
                 <Route path='category1' element={<IndexCategory1 />} />
                 <Route path='category1/page1' element={<Category1 />} />
+                <Route path='/inscripciones' element={<IndexInscripciones />} />
+                
               </Route>
               <Route path= "/auth" element={<AuthLayout/>} >
                 <Route path='register' element={<Register/>}/>
