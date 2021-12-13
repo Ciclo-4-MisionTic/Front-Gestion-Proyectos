@@ -3,7 +3,6 @@ import { useQuery } from '@apollo/client'
 import { GET_INSCRIPCIONES } from 'graphql/inscripciones/queries'
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
-import PrivateRoute from 'components/PrivateRoute';
 import ButtonLoading from 'components/ButtonLoading';
 import { Enum_EstadoInscripcion } from 'utils/enums';
 import { EDITAR_INSCRIPCION, CREAR_INSCRIPCION } from 'graphql/inscripciones/mutations';
@@ -23,7 +22,6 @@ const IndexInscripciones = () => {
 
     if(loading) return <div>Cargando....</div>
     return (
-        <PrivateRoute roleList={["LIDER"]}>
             <div>
                 <div className='titulo'> Datos Inscripcion:</div>
                 
@@ -60,7 +58,7 @@ const IndexInscripciones = () => {
                 </tbody>
                 </table>
             </div>
-        </PrivateRoute>
+
     );
 };
 
