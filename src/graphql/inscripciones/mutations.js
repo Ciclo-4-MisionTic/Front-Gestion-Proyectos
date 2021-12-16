@@ -1,25 +1,20 @@
-import {gql} from '@apollo/client'
+import { gql } from '@apollo/client';
 
-const EDITAR_INSCRIPCION = gql `
-mutation EditarInscripcion($estado: Enum_EstadoInscripcion!) {
-  editarInscripcion(estado: $estado) {
-    _id
-    estado
-    proyecto {
-      nombre
+const CREAR_INSCRIPCION = gql`
+  mutation Mutation($proyecto: String!, $estudiante: String!) {
+    crearInscripcion(proyecto: $proyecto, estudiante: $estudiante) {
+      _id
     }
   }
-}
 `;
 
-const CREAR_INSCRIPCION = gql `
-mutation CrearInscripcion($estado: Enum_EstadoInscripcion!, $proyecto: String!, $estudiante: String!) {
-  crearInscripcion(estado: $estado, proyecto: $proyecto, estudiante: $estudiante) {
-    _id
-    estado
+const APROBAR_INSCRIPCION = gql`
+  mutation AprobarInscripcion($aprobarInscripcionId: String!) {
+    aprobarInscripcion(id: $aprobarInscripcionId) {
+      _id
+    }
   }
-}
 `;
 
-export { EDITAR_INSCRIPCION, CREAR_INSCRIPCION };
+export { CREAR_INSCRIPCION, APROBAR_INSCRIPCION };
 

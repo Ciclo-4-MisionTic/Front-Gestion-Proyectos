@@ -77,6 +77,13 @@ const AccordionProyecto = ({ proyecto }) => {
               }}
             />
           </PrivateComponent>
+          <PrivateComponent roleList={['ESTUDIANTE']}>
+            <InscripcionProyecto
+              idProyecto={proyecto._id}
+              estado={proyecto.estado}
+              inscripciones={proyecto.inscripciones}
+            />
+          </PrivateComponent>
           <div>Liderado Por: {proyecto.lider.correo}</div>
           <div className='flex'>
             {proyecto.objetivos.map((objetivo) => {
@@ -140,6 +147,54 @@ const Objetivo = ({ tipo, descripcion }) => {
         <div>Editar</div>
       </PrivateComponent>
     </div>
+  );
+};
+
+const InscripcionProyecto = ({ idProyecto, estado, inscripciones }) => {
+  const [estadoInscripcion, setEstadoInscripcion] = useState('');
+
+  // falta captura del error de la mutacion
+  const [crearInscripcion, { data, loading }] = useMutation(CREAR_INSCRIPCION);
+  const { userData } = useUser();
+
+  useEffect(() => {
+    if (userData && inscripciones) {
+      const flt = inscripciones.filter(
+        (el) => el.estudiante._id === userData._id
+      );
+      if (flt.length > 0) {
+        setEstadoInscripcion(flt[0].estado);
+      }
+    }
+  }, [userData, inscripciones]);
+
+  useEffect(() => {
+    if (data) {
+      toast.success('inscripcion creada con exito');
+    }
+  }, [data]);
+
+  const confirmarInscripcion = () => {
+    crearInscripcion({
+      variables: { proyecto: idProyecto, estudiante: userData._id },
+    });
+  };
+
+  return (
+    <>
+      {estadoInscripcion !== '' ? (
+        <span>
+          Ya estas inscrito en este proyecto y el estado es {estadoInscripcion}
+        </span>
+      ) : (
+        <ButtonLoading
+          onClick={() => confirmarInscripcion()}
+          disabled={estado === 'INACTIVO'}
+          loading={loading}
+          text='Inscribirme en este proyecto'
+        />
+      )}
+    </>
   );
 };
 

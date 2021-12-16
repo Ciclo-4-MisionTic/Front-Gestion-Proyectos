@@ -86,6 +86,8 @@ function App() {
                 <Route path='' element={<Index />} />
                 <Route path='/usuarios' element={<IndexUsuarios />} />
                 <Route path='/usuarios/editar/:_id' element={<EditarUsuario />} />
+                <Route path='/proyectos' element={<IndexProyectos />} />
+                <Route path='/proyectos/nuevo' element={<NuevoProyecto />} />
                 <Route path='page2' element={<Page2 />} />
                 <Route path='category1' element={<IndexCategory1 />} />
                 <Route path='category1/page1' element={<Category1 />} />
