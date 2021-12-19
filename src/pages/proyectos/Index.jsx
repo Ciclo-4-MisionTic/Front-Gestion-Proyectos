@@ -13,6 +13,10 @@ import { EDITAR_PROYECTO } from 'graphql/proyectos/mutations';
 import useFormData from 'hooks/useFormData';
 import PrivateComponent from 'components/PrivateComponent';
 import { Link } from 'react-router-dom';
+import { Enum_FaseProyecto } from 'utils/enums';
+import { CREAR_INSCRIPCION } from 'graphql/inscripciones/mutations';
+import { useUser } from 'context/userContext';
+import { toast } from 'react-toastify';
 
 const AccordionStyled = styled((props) => <Accordion {...props} />)(({ theme }) => ({
   backgroundColor: '#919191',

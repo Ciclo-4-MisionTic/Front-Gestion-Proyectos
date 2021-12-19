@@ -10,6 +10,7 @@ import IndexCategory1 from 'pages/category1/Index';
 import Category1 from 'pages/category1/CategoryPage1';
 import IndexUsuarios from 'pages/usuarios';
 import EditarUsuario from 'pages/usuarios/editar';
+import IndexProyectos from 'pages/proyectos/Index';
 import 'styles/globals.css';
 import 'styles/tabla.css'
 import AuthLayout from 'layouts/AuthLayout';
@@ -18,6 +19,7 @@ import Login from 'pages/auth/login';
 import { AuthContext } from 'context/authContext';
 import jwt_decode from 'jwt-decode';
 import IndexInscripciones from 'pages/inscripciones';
+import NuevoProyecto from 'pages/proyectos/NuevoProyecto';
 
 // import PrivateRoute from 'components/PrivateRoute';
 
