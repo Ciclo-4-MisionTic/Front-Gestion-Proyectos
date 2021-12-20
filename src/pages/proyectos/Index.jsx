@@ -1,32 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import { styled } from '@mui/material/styles';
 import { useMutation, useQuery } from '@apollo/client';
 import { PROYECTOS } from 'graphql/proyectos/queries';
 import DropDown from 'components/Dropdown';
-import { Dialog } from '@mui/material';
+import { Dialog, Input } from '@mui/material';
 import { Enum_EstadoProyecto } from 'utils/enums';
 import ButtonLoading from 'components/ButtonLoading';
 import { EDITAR_PROYECTO } from 'graphql/proyectos/mutations';
 import useFormData from 'hooks/useFormData';
 import PrivateComponent from 'components/PrivateComponent';
-import { Link } from 'react-router-dom';
 import { Enum_FaseProyecto } from 'utils/enums';
-import { CREAR_INSCRIPCION } from 'graphql/inscripciones/mutations';
-import { useUser } from 'context/userContext';
+import { Link } from 'react-router-dom';
+import { CREAR_INSCRIPCION } from 'graphql/inscripciones/mutaciones';
 import { toast } from 'react-toastify';
+import { useUser } from 'context/userContext';
+import {
+  AccordionStyled,
+  AccordionSummaryStyled,
+  AccordionDetailsStyled,
+} from 'components/Accordion';
 
-const AccordionStyled = styled((props) => <Accordion {...props} />)(({ theme }) => ({
-  backgroundColor: '#919191',
-}));
-const AccordionSummaryStyled = styled((props) => <AccordionSummary {...props} />)(({ theme }) => ({
-  backgroundColor: '#919191',
-}));
-const AccordionDetailsStyled = styled((props) => <AccordionDetails {...props} />)(({ theme }) => ({
-  backgroundColor: '#ccc',
-}));
 
 const IndexProyectos = () => {
   const { data: queryData, loading, error } = useQuery(PROYECTOS);
@@ -39,19 +31,22 @@ const IndexProyectos = () => {
 
   if (queryData.Proyectos) {
     return (
-      <div className='p-10 flex flex-col items-center'>
-        <h1 className='text-gray-900 text-xl font-bold uppercase'>Proyectos</h1>
-        <div className='self-end my-5'>
-          <button className='bg-indigo-500 p-2 rounded-lg shadow-sm text-white hover:bg-indigo-400'>
-            <Link to='/proyectos/nuevo'>Crear nuevo proyecto</Link>
-          </button>
-        </div>
+      <div className='p-5'>
+        <h1 className='titulo'>Lista de Proyectos</h1>
+        <PrivateComponent roleList={['LIDER']}> 
+          <div className='self-end my-5 flex justify-end' >
+            <button className='buttonCrear'>
+              <Link to='/proyectos/nuevo'>Crear nuevo proyecto</Link>
+            </button>
+          </div>
+        </PrivateComponent>
+        
         {queryData.Proyectos.map((proyecto) => {
           return (
-            <div className='w-full'>
               <AccordionProyecto proyecto={proyecto} />
-            </div>
-          );
+              
+           
+          )
         })}
       </div>
     );
@@ -65,7 +60,9 @@ const AccordionProyecto = ({ proyecto }) => {
   return (
     <>
       <AccordionStyled>
-        <AccordionSummaryStyled expandIcon={<i className='fas fa-chevron-down' />}>
+        <AccordionSummaryStyled
+          expandIcon={<i className='fas fa-chevron-down' />}
+        >
           <div className='flex w-full justify-between'>
             <div className='uppercase font-bold text-gray-100 '>
               {proyecto.nombre} - {proyecto.estado}
@@ -73,26 +70,36 @@ const AccordionProyecto = ({ proyecto }) => {
           </div>
         </AccordionSummaryStyled>
         <AccordionDetailsStyled>
-          <PrivateComponent roleList={['ADMINISTRADOR']}>
+          <PrivateComponent roleList={['ADMINISTRADOR', 'LIDER']}>
             <i
-              className='mx-4 fas fa-pen text-yellow-600 hover:text-yellow-400'
-              onClick={() => {
-                setShowDialog(true);
-              }}
-            />
+              className='mx-4 fas fa-pen lapizEditarOscuro flex justify-end' />
           </PrivateComponent>
-          <PrivateComponent roleList={['ESTUDIANTE']}>
+          <PrivateComponent roleList={['LIDER','ESTUDIANTE']}>
             <InscripcionProyecto
               idProyecto={proyecto._id}
               estado={proyecto.estado}
               inscripciones={proyecto.inscripciones}
             />
           </PrivateComponent>
-          <div>Liderado Por: {proyecto.lider.correo}</div>
+          <div><span className='font-bold'>Fecha de Inicio:</span> {proyecto.fechaInicio}</div>
+          <div><span className='font-bold'>Fecha Final:</span> {proyecto.fechaFin}</div>
+          <div><span className='font-bold'>Fase: </span> {proyecto.fase} </div>
+          <div><span className='font-bold'>Presupuesto:</span> {proyecto.presupuesto} </div>
+          <div><span className='font-bold'>Liderado Por:</span> {proyecto.lider.nombre} {proyecto.lider.apellido}</div>
+          <PrivateComponent roleList={['LIDER']}>
+          <div><span className='font-bold'>Avances:</span> {proyecto.avances._id}</div>
+          </PrivateComponent>
+          
           <div className='flex'>
-            {proyecto.objetivos.map((objetivo) => {
-              return <Objetivo tipo={objetivo.tipo} descripcion={objetivo.descripcion} />;
-            })}
+            {proyecto.objetivos.map((objetivo, index) => (
+              <Objetivo
+                index={index}
+                _id={objetivo._id}
+                idProyecto={proyecto._id}
+                tipo={objetivo.tipo}
+                descripcion={objetivo.descripcion}
+              />
+            ))}
           </div>
         </AccordionDetailsStyled>
       </AccordionStyled>
@@ -128,14 +135,22 @@ const FormEditProyecto = ({ _id }) => {
 
   return (
     <div className='p-4'>
-      <h1 className='font-bold'>Modificar Estado del Proyecto</h1>
+      <h1 className='font-bold'>Actualizar Proyecto</h1>
       <form
         ref={form}
         onChange={updateFormData}
         onSubmit={submitForm}
         className='flex flex-col items-center'
       >
+        <PrivateComponent roleList={['ADMINISTRADOR']}>
         <DropDown label='Estado del Proyecto' name='estado' options={Enum_EstadoProyecto} />
+        <DropDown label='Fase del Proyecto' name='fase' options={Enum_FaseProyecto} />
+        </PrivateComponent>
+        <PrivateComponent roleList={['LIDER']}>
+        <Input label='Nombre del Proyecto' name='nombre' type='text'/>
+        <Input label='Nombre del Proyecto' name='nombre' type='text' required={true} />
+        <Input label='Nombre del Proyecto' name='nombre' type='text' required={true} />
+        </PrivateComponent>
         <ButtonLoading disabled={false} loading={loading} text='Confirmar' />
       </form>
     </div>
@@ -144,7 +159,7 @@ const FormEditProyecto = ({ _id }) => {
 
 const Objetivo = ({ tipo, descripcion }) => {
   return (
-    <div className='mx-5 my-4 bg-gray-50 p-8 rounded-lg flex flex-col items-center justify-center shadow-xl'>
+    <div className='mx-5 my-4 bg-white p-8 rounded-lg flex-flex-col items-center justify-center shadow-xl'>
       <div className='text-lg font-bold'>{tipo}</div>
       <div>{descripcion}</div>
       <PrivateComponent roleList={['ADMINISTRADOR']}>
@@ -154,6 +169,7 @@ const Objetivo = ({ tipo, descripcion }) => {
   );
 };
 
+//estoy tratando de crear algo en proyecto para avances pero por ahora no funciona
 const InscripcionProyecto = ({ idProyecto, estado, inscripciones }) => {
   const [estadoInscripcion, setEstadoInscripcion] = useState('');
 
@@ -187,9 +203,20 @@ const InscripcionProyecto = ({ idProyecto, estado, inscripciones }) => {
   return (
     <>
       {estadoInscripcion !== '' ? (
-        <span>
-          Ya estas inscrito en este proyecto y el estado es {estadoInscripcion}
-        </span>
+        <div className='flex flex-col items-start'>
+          <span>
+            Ya estas inscrito en este proyecto y el estado es{' '}
+            {estadoInscripcion}
+          </span>
+          {estadoInscripcion === 'ACEPTADO' && (
+            <Link
+              to={`/avances/${idProyecto}`}
+              className='bg-yellow-700 p-2 rounded-lg text-white my-2 hover:bg-yellow-500'
+            >
+              Visualizar  Avance
+            </Link>
+          )}
+        </div>
       ) : (
         <ButtonLoading
           onClick={() => confirmarInscripcion()}

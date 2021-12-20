@@ -1,27 +1,31 @@
-import { gql } from '@apollo/client';
+import { gql} from '@apollo/client'
 
-const PROYECTOS = gql`
-  query Proyectos {
+const PROYECTOS = gql `
+    query Proyectos {
     Proyectos {
-      _id
-      nombre
-      estado
-      objetivos {
-        descripcion
-        tipo
-      }
-      lider {
         _id
-        correo
-      }
-      inscripciones{
+        nombre
+        presupuesto
+        fechaInicio
+        fechaFin
         estado
-        estudiante{
-          _id
+        fase
+        lider {
+            _id
+            nombre
+            apellido
+            correo
         }
-      }
+        objetivos {
+        tipo
+        descripcion
+        }
+        avances {
+            _id
+            fecha
+            descripcion
+        }
     }
-  }
-`;
-
-export { PROYECTOS };
+    }
+`
+export {PROYECTOS}
