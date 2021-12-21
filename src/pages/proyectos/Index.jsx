@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import { styled } from '@mui/material/styles';
 import { useMutation, useQuery } from '@apollo/client';
 import { PROYECTOS } from 'graphql/proyectos/queries';
 import DropDown from 'components/Dropdown';
-import { Dialog } from '@mui/material';
+import { Dialog, Input } from '@mui/material';
 import { Enum_EstadoProyecto } from 'utils/enums';
 import ButtonLoading from 'components/ButtonLoading';
 import { EDITAR_PROYECTO } from 'graphql/proyectos/mutations';
@@ -14,16 +10,15 @@ import useFormData from 'hooks/useFormData';
 import PrivateComponent from 'components/PrivateComponent';
 import { Enum_FaseProyecto } from 'utils/enums';
 import { Link } from 'react-router-dom';
+import { CREAR_INSCRIPCION } from 'graphql/inscripciones/mutaciones';
+import { toast } from 'react-toastify';
+import { useUser } from 'context/userContext';
+import {
+  AccordionStyled,
+  AccordionSummaryStyled,
+  AccordionDetailsStyled,
+} from 'components/Accordion';
 
-const AccordionStyled = styled((props) => <Accordion {...props} />)(({ theme }) => ({
-  backgroundColor: '#8C515C',
-}));
-const AccordionSummaryStyled = styled((props) => <AccordionSummary {...props} />)(({ theme }) => ({
-  backgroundColor: '#8C515C',
-}));
-const AccordionDetailsStyled = styled((props) => <AccordionDetails {...props} />)(({ theme }) => ({
-  backgroundColor: '#D9BFC4',
-}));
 
 const IndexProyectos = () => {
   const { data: queryData, loading, error } = useQuery(PROYECTOS);
@@ -65,20 +60,29 @@ const AccordionProyecto = ({ proyecto }) => {
   return (
     <>
       <AccordionStyled>
-        <AccordionSummaryStyled expandIcon={<i className='fas fa-chevron-down' />}>
+        <AccordionSummaryStyled
+          expandIcon={<i className='fas fa-chevron-down' />}
+        >
           <div className='flex w-full justify-between'>
-            <div className='uppercase font-semibold text-moradoClaro-light'>
+            <div className='uppercase font-bold text-gray-100 '>
               {proyecto.nombre} - {proyecto.estado}
             </div>
           </div>
         </AccordionSummaryStyled>
         <AccordionDetailsStyled>
-          <PrivateComponent roleList={['ADMINISTRADOR']}>
-            <i
+          <PrivateComponent roleList={['ADMINISTRADOR', 'LIDER']}>
+          <i
               className='mx-4 fas fa-pen lapizEditarOscuro flex justify-end '
               onClick={() => {
                 setShowDialog(true);
               }}
+            />
+          </PrivateComponent>
+          <PrivateComponent roleList={['LIDER','ESTUDIANTE']}>
+            <InscripcionProyecto
+              idProyecto={proyecto._id}
+              estado={proyecto.estado}
+              inscripciones={proyecto.inscripciones}
             />
           </PrivateComponent>
           <div><span className='font-bold'>Fecha de Inicio:</span> {proyecto.fechaInicio}</div>
@@ -86,11 +90,20 @@ const AccordionProyecto = ({ proyecto }) => {
           <div><span className='font-bold'>Fase: </span> {proyecto.fase} </div>
           <div><span className='font-bold'>Presupuesto:</span> {proyecto.presupuesto} </div>
           <div><span className='font-bold'>Liderado Por:</span> {proyecto.lider.nombre} {proyecto.lider.apellido}</div>
+          <PrivateComponent roleList={['LIDER']}>
+          <div><span className='font-bold'>Avances:</span> {proyecto.avances._id}</div>
+          </PrivateComponent>
           
           <div className='flex'>
-            {proyecto.objetivos.map((objetivo) => {
-              return <Objetivo tipo={objetivo.tipo} descripcion={objetivo.descripcion} />;
-            })}
+            {proyecto.objetivos.map((objetivo, index) => (
+              <Objetivo
+                index={index}
+                _id={objetivo._id}
+                idProyecto={proyecto._id}
+                tipo={objetivo.tipo}
+                descripcion={objetivo.descripcion}
+              />
+            ))}
           </div>
         </AccordionDetailsStyled>
       </AccordionStyled>
@@ -133,9 +146,18 @@ const FormEditProyecto = ({ _id }) => {
         onSubmit={submitForm}
         className='flex flex-col items-center'
       >
-        {/* <DropDown label='Estado del Proyecto' name='prespuesto' defaultValue={proyecto.presupuesto} /> */}
+        <PrivateComponent roleList={['ADMINISTRADOR']}>
         <DropDown label='Estado del Proyecto' name='estado' options={Enum_EstadoProyecto} />
         <DropDown label='Fase del Proyecto' name='fase' options={Enum_FaseProyecto} />
+        </PrivateComponent>
+        <PrivateComponent roleList={['LIDER']}>
+          <div className='flex flex-col align-center p-3 items-center'>
+          <span> Nombre Del Proyecto </span>
+          <Input label='Nombre del Proyecto' name='nombre' type='text'/>
+          <span className='mt-5'> Presupuesto </span>
+          <Input label='Presupuesto' name='presupuesto' type='text'/>
+          </div>
+        </PrivateComponent>
         <ButtonLoading disabled={false} loading={loading} text='Confirmar' />
       </form>
     </div>
@@ -151,6 +173,66 @@ const Objetivo = ({ tipo, descripcion }) => {
         <div>Editar</div>
       </PrivateComponent>
     </div>
+  );
+};
+
+//estoy tratando de crear algo en proyecto para avances pero por ahora no funciona
+const InscripcionProyecto = ({ idProyecto, estado, inscripciones }) => {
+  const [estadoInscripcion, setEstadoInscripcion] = useState('');
+
+  // falta captura del error de la mutacion
+  const [crearInscripcion, { data, loading }] = useMutation(CREAR_INSCRIPCION);
+  const { userData } = useUser();
+
+  useEffect(() => {
+    if (userData && inscripciones) {
+      const flt = inscripciones.filter(
+        (el) => el.estudiante._id === userData._id
+      );
+      if (flt.length > 0) {
+        setEstadoInscripcion(flt[0].estado);
+      }
+    }
+  }, [userData, inscripciones]);
+
+  useEffect(() => {
+    if (data) {
+      toast.success('inscripcion creada con exito');
+    }
+  }, [data]);
+
+  const confirmarInscripcion = () => {
+    crearInscripcion({
+      variables: { proyecto: idProyecto, estudiante: userData._id },
+    });
+  };
+
+  return (
+    <>
+      {estadoInscripcion !== '' ? (
+        <div className='flex flex-col items-start'>
+          <span>
+            Ya estas inscrito en este proyecto y el estado es{' '}
+            {estadoInscripcion}
+          </span>
+          {estadoInscripcion === 'ACEPTADO' && (
+            <Link
+              to={`/avances/${idProyecto}`}
+              className='bg-yellow-700 p-2 rounded-lg text-white my-2 hover:bg-yellow-500'
+            >
+              Visualizar  Avance
+            </Link>
+          )}
+        </div>
+      ) : (
+        <ButtonLoading
+          onClick={() => confirmarInscripcion()}
+          disabled={estado === 'INACTIVO'}
+          loading={loading}
+          text='Inscribirme en este proyecto'
+        />
+      )}
+    </>
   );
 };
 

@@ -1,15 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
+<<<<<<< HEAD
 import InputLeer from 'components/InputLeer';
+=======
+import ButtonLoading from 'components/ButtonLoading';
+import Input from 'components/Input';
+>>>>>>> 74bccd23691af0fdf9d1554555c6abc47bedbdb4
 import { EDITAR_PERFIL } from 'graphql/usuarios/mutations';
 import useFormData from 'hooks/useFormData';
 import { uploadFormData } from 'utils/uploadFormData';
 import { useUser } from 'context/userContext';
 import { GET_USUARIO } from 'graphql/usuarios/queries';
 import { toast } from 'react-toastify';
+<<<<<<< HEAD
 import { Link } from 'react-router-dom';
 
 const Profile = () => {
+=======
+import {Link } from 'react-router-dom';
+
+const EditarProfile = () => {
+>>>>>>> 74bccd23691af0fdf9d1554555c6abc47bedbdb4
   const [editFoto, setEditFoto] = useState(false);
   const { form, formData, updateFormData } = useFormData();
   const { userData, setUserData } = useUser();
@@ -54,33 +65,34 @@ const Profile = () => {
 
   return (
     <div className='p-10 flex flex-col items-center justify-center w-full'>
-      <h1 className='titulo'>Perfil del usuario</h1>
+      <div className='self-start' >
+                <Link to='/perfil'>
+                <i className='fas fa-arrow-left flechaRegresar' />
+                </Link>
+              </div>
+      <h1 className='titulo'>Editar Perfil</h1>
       <form className='letraMediana' ref={form} onChange={updateFormData} onSubmit={submitForm}>
-        <InputLeer
+        <Input
           defaultValue={queryData.Usuario.nombre}
           label='Nombre'
           name='nombre'
           type='text'
-          readonly
+          required
         />
-        <InputLeer
+        <Input
           defaultValue={queryData.Usuario.apellido}
           label='Apellido'
           name='apellido'
           type='text'
-          readonly
+          required
         />
-        <InputLeer
+        <Input
           defaultValue={queryData.Usuario.identificacion}
           label='Identificación'
           name='identificacion'
           type='text'
-          value="Dato de solo lectura" readonly
+          required
         />
-        <div className='p-10 flex flex-col items-center justify-center w-full'>
-          <span className='subTitulo' >Estado : {queryData.Usuario.estado}</span>
-          <span className='subTitulo' >Rol: {queryData.Usuario.rol}</span>
-        </div>
         {/* {queryData.Usuario.foto && !editFoto ? (
           <div className='flex flex-col items-center'>
             <img
@@ -107,20 +119,15 @@ const Profile = () => {
               Cancelar
             </button>
           </div>
-        )}
+        )} */}
         <ButtonLoading
           text='Confirmar'
           loading={loadingMutation}
           disabled={false}
-        /> */}
-        <button className='buttonCrear items-center justify-center'>
-          <Link to={`/perfil/editarPerfil`}>
-            Editar Perfil
-          </Link>
-        </button>
+        />
       </form>
     </div>
   );
 };
 
-export default Profile;
+export default EditarProfile;
